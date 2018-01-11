@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Image extends Model
 {
-    protected $table = 'hogaryspacios_image';
+    protected $table = 'image';
     protected $primaryKey = 'id_image';
     public  $timestamps = false;
 }
