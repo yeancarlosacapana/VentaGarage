@@ -24,43 +24,48 @@
                 </h5>
                 <h6>Precio</h6>
                 <form action = "{{url('filtrarPrecio')}}" method = "GET">
-
-                
+                    @if($tipoBusqueda=='category') 
+                        @foreach ($itemCategory as $Gitemcategory)
+                            <input type="text" class="hidden" name="categoriaId" value="{{$Gitemcategory->id_category}}">
+                            @break
+                        @endforeach
+                    @endif
+                    <input type="hidden" name="name" value="{{$name}}">
+                    <input type="text" class="hidden" name="tipoBusqueda" value="{{$tipoBusqueda}}">
+                    <div id="slider-range"></div>
+                    <div class="contenedor-precio">
+                        <input type="text" name="precioMin" id="amount" readonly min="0" max="1000" class="txt-filtrar" value = "{{$precioMin}}">
+                        <span class="glyphicon glyphicon-minus"></span>   
+                        <input type="text" name="precioMax" id="amount1" readonly min="240" max="5000" class="txt-filtrar" value = "{{$precioMax}}">
+                    </div>
+                    <button type="submit" class="btn-filtrar btn btn-block">Filtrar Precio</button>
+               </form> 
+            </div>
+            <form action="{{url('filtrarFecha')}}"  method="GET">
                 @if($tipoBusqueda=='category') 
                     @foreach ($itemCategory as $Gitemcategory)
-                          <input type="text" class="hidden" name="categoriaId" value="{{$Gitemcategory->id_category}}">
+                        <input type="text" class="hidden" name="categoriaId" value="{{$Gitemcategory->id_category}}">
                         @break
                     @endforeach
                 @endif
-                <input type="hidden" name="name" value="{{$name}}">
                 <input type="text" class="hidden" name="tipoBusqueda" value="{{$tipoBusqueda}}">
-                <div id="slider-range"></div>
-                <div class="contenedor-precio">
-                    <input type="text" name="precioMin" id="amount" readonly min="0" max="1000" class="txt-filtrar" value = "{{$precioMin}}">
-                    <span class="glyphicon glyphicon-minus"></span>   
-                    <input type="text" name="precioMax" id="amount1" readonly min="240" max="5000" class="txt-filtrar" value = "{{$precioMax}}">
+                <input type="hidden" name="name" value="{{$name}}">
+                <div class="fecha-post">
+                    <h6>Fecha de Post</h6>
+                    <div class="checkbox">
+                        <label><input type="radio" value="hoy" id="hoy" name="fecha" @if($fecha == 'hoy') checked="checked" @endif>Hoy</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="radio" value="semana" id="semana" name="fecha" @if($fecha == 'semana') checked="checked" @endif>Esta semana</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="radio" value="mes" id="mes" name="fecha"  @if($fecha == 'mes') checked="checked" @endif>Ultimo mes</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="radio" value="all" id="all" name="fecha" >Todos</label>
+                    </div>
+                    <input type="submit" name="filtrar" class="hidden" id="filtrar_fecha">
                 </div>
-                <button type="submit" class="btn-filtrar btn btn-block">Filtrar Precio</button>
-               </form> 
-            </div>
-            <form action="{{url('filtrarFecha')}}"  method="POST">
-             <input type="hidden" value = "{{ csrf_token() }}" name="_token">
-            <div class="fecha-post">
-                <h6>Fecha de Post</h6>
-                <div class="checkbox">
-                    <label><input type="radio" value="" id="hoy" name="fecha">Hoy</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="radio" value="" id="semana" name="fecha">Esta semana</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="radio" value="" id="mes" name="fecha">Ultimo mes</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="radio" value="" id="all" name="fecha" checked >Todos</label>
-                </div>
-                <input type="submit" name="filtrar" class="hidden" id="filtrar_fecha">
-            </div>
             </form>
         </div>
         <div class="col-lg-9">
@@ -125,7 +130,7 @@
         </div>          
       </div>
       
-      @stop()
+      @stop
       @section('script')
       <script src="{{ asset('js/price.js') }}"></script>
       @stop

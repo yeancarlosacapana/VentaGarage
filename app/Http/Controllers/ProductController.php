@@ -7,8 +7,13 @@ use App\CategoryLang;
 use App\Category;
 use App\CategoryProduct;
 use App\Product;
+use App\ProductLang;
+use Carbon\Carbon;
+use App\Image;
+use DB;
 class ProductController extends Controller
 {
+    private $id_lang = 2;
     /**
      * Display a listing of the resource.
      *
@@ -16,9 +21,66 @@ class ProductController extends Controller
      */
     public function index()
     {
-        
+        $oCategory = Category::with('CategoryLang')
+                                ->where('level_depth','>','1')
+                                ->orderBy('level_depth', 'asc')->get();
+        return response()->json($oCategory,200);
     }
 
+    public function addProduct(Request $request)
+    {
+        $eProduct = $request;
+        $mProduct = new Product();
+        $mProduct->id_tax_rules_group = 1;
+        $mProduct->id_category_default = $eProduct["id_category_default"];
+        $mProduct->price = $eProduct["price"];
+        $mProduct->condition = $eProduct["condition"];
+        $mProduct->date_add=Carbon::now();
+        $mProduct->date_upd=Carbon::now();
+        $mProduct->save();
+        $oProductLang = $eProduct['productLang'];
+        $oImages = $eProduct['imgData'];
+    
+        $this->addProductLang($oProductLang,$mProduct->id_product);
+        $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product);
+        $this->addImages($oImages,$mProduct->id_product);
+
+        return response()->json($mProduct, 200);
+        
+    }
+    public function addProductLang($oProductLang,$id_product)
+    {
+        $mProductLang = new ProductLang();
+        $mProductLang->id_product = $id_product;
+        $mProductLang->id_lang=2;
+       $mProductLang->description=$oProductLang['description'];
+       $mProductLang->description_short=$oProductLang['description'];
+       $mProductLang->link_rewrite=$oProductLang['name'];
+       $mProductLang->name=$oProductLang['name'];
+       $mProductLang->save();
+    }
+    public function addImages($oImages,$id_product)
+    {
+        foreach($oImages as $image){
+            $mImage = new Image();
+            $mImage->id_product = $id_product;
+            $mImage->save();
+
+            $file_name = $mImage->id_image.'.jpg'; //generating unique file name; 
+            @list($type, $image) = explode(';', $image);
+            @list(, $image) = explode(',', $image); 
+            if($image != ""){ // storing image in storage/app/public Folder 
+                \Storage::disk('public')->put($file_name,base64_decode($image)); 
+            }
+        }
+    }
+    public function addCategoryProduct($id_category,$id_product)
+    {
+        $mCategoryProduct = new CategoryProduct();
+        $mCategoryProduct->id_product=$id_product;
+        $mCategoryProduct->id_category = $id_category;
+        $mCategoryProduct->save();
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -37,7 +99,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -48,7 +110,13 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        
+
+        $productById = DB::table('hogaryspacios_product')
+        ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
+        ->where('hogaryspacios_product.id_product','=',$id)
+        ->where('hogaryspacios_product_lang.id_lang','=',$this->id_lang)
+        ->get();
+        return response()->json($productById,200);
     }
 
     /**

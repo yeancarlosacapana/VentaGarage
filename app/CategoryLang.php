@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CategoryLang extends Model
 {
-    protected $table = 'contihogar_category_lang';
+    protected $table = 'hogaryspacios_category_lang';
     public  $timestamps = false;
 }

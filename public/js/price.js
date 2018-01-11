@@ -1,4 +1,5 @@
 $( function() {
+    console.log('hhh');
     iPrecio1 = $("#amount1").val();
     iPrecio2 = $( "#amount" ).val();
     $( "#slider-range" ).slider({
@@ -16,34 +17,35 @@ $( function() {
   } );
 
   $("#hoy").click(function(){
-    if($(this).is(':checked')){
+    /*if($(this).is(':checked')){
         $(this).val('hoy')
     }else{
         $(this).val('')
-    }
+    }*/
     $("#filtrar_fecha").click()
 });
 $("#semana").click(function(){
-    if($(this).is(':checked')){
+    /*if($(this).is(':checked')){
         $(this).val('semana')
     }else{
         $(this).val('')
-    }
+    }*/
     $("#filtrar_fecha").click()
 });
 $("#mes").click(function(){
-    if($(this).is(':checked')){
+    /*if($(this).is(':checked')){
         $(this).val('mes')
     }else{
         $(this).val('')
-    }
+    }*/
     $("#filtrar_fecha").click()
 });
 $("#all").click(function(){
-    if($(this).is(':checked')){
+    /*if($(this).is(':checked')){
         $(this).val('all')
     }else{
         $(this).val('')
-    }
+    }*/
+    $(this).attr('checked',true);
     window.location.reload();
 });

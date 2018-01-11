@@ -13,6 +13,10 @@ use Illuminate\Pagination\Paginator;
 
 class CategoryProductController extends Controller
 {
+    private $iPrecioMin = 0;
+    private $iPrecioMax = 1000;
+    private $sAll = "all";
+    private $id_lang = 1;
     /**
      * Display a listing of the resource.
      *
@@ -52,23 +56,22 @@ class CategoryProductController extends Controller
      */
     public function show($id)
     {
-        $oCategoryLang = CategoryLang::get()->where('id_category','=',$id)->first();
-        $name = $oCategoryLang->name;
-        $tipoBusqueda = 'category';
-        $link_rewrite = $oCategoryLang->link_rewrite ;
-        $precioMin = 0;
-        $precioMax = 1000;
-        //$itemCategory = CategoryProduct::all();
-        $itemCategory = DB::table('contihogar_category_product')
-        ->leftJoin('contihogar_product', 'contihogar_category_product.id_product', '=', 'contihogar_product.id_product')
-        ->leftJoin('contihogar_product_lang', 'contihogar_category_product.id_product', '=' , 'contihogar_product_lang.id_product')
-        
-        ->where('contihogar_category_product.id_category', '=' , $id)->Paginate(6);
-        //var_dump($itemCategory);
-        //$itemCategory['category'] = $oCategory;
-        return view('templates.itemCategory', compact('itemCategory'))->with('name' ,$name)->with('link_rewrite',$link_rewrite)->with('tipoBusqueda',$tipoBusqueda)->with('precioMin',$precioMin)->with('precioMax',$precioMax);
-        //return response()->json($itemCategory,200);
-        //return response()->json($oCategoryLang,200);
+        $itemCategory = DB::table('hogaryspacios_product')
+                        ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
+                        ->leftJoin('hogaryspacios_category_product', 'hogaryspacios_category_product.id_product', '=', 'hogaryspacios_product.id_product')
+                        ->leftJoin('hogaryspacios_category', 'hogaryspacios_category.id_category', '=', 'hogaryspacios_category_product.id_category')
+                        ->leftJoin('hogaryspacios_category_lang', 'hogaryspacios_category_lang.id_category', '=' , 'hogaryspacios_category.id_category')
+                        ->where('hogaryspacios_category_product.id_category', '=' , $id)
+                        //
+                        ->select('hogaryspacios_category_lang.name as category',
+                                'hogaryspacios_category_product.id_category',
+                                'hogaryspacios_category_product.id_product',
+                                'hogaryspacios_product_lang.name as producto',
+                                'hogaryspacios_product.price',
+                                'hogaryspacios_product.condition'
+                                )
+                        ->Paginate(6);
+        return response()->json($itemCategory,200);
     }
 
     /**
@@ -112,73 +115,154 @@ class CategoryProductController extends Controller
      */
     public function busquedaPorFecha(Request $request)
     {
-        
-        $name = "hola";
-        $link_rewrite = "mundo" ;
-
-        $fecha1 = Carbon::now();
-        $fecha2 = Carbon::now();
+        $fecha1                 =   Carbon::now();
+        $fecha2                 =   Carbon::now();
+        $categoriaId            =   (int)$request['id_category'];
+        $productName            =   $request['name'];
+        $itemCategory           =   [];
+        $sortBy                 =   $request['_sort'];
+        $order                  =   $request['_order'];
     
-        $isFilter = true;
-        var_dump($request->fecha);
         switch ($request->fecha) {
             case "hoy":
                $fecha1 = $fecha1->toDateString();
                $fecha2 = $fecha2->toDateString();
                 break;
             case "semana":
-                $fecha1 = $fecha1->toDateString();
-                $fecha2 = Carbon::now()->addDays(-7);
+                $fecha1 = Carbon::now()->addDays(-7)->toDateString();
+                $fecha2 = $fecha2->toDateString();
                 break;
             case "mes":
-                echo "i es igual a 2";
+                $fecha1 = Carbon::now()->addMonths(-1)->toDateString();
+                $fecha2 = $fecha2->toDateString();
                break;
            case "all":
-               $isFilter = false;
               break;    
        }
-       $itemCategory = DB::table('contihogar_product')
-       ->leftJoin('contihogar_product_lang', 'contihogar_product.id_product', '=' , 'contihogar_product_lang.id_product')
-       ->whereBetween('DATE(contihogar_product.date_add)',[$fecha1, $fecha2])
-       ->paginate(3);
-       //return view('templates.itemCategory', compact('itemCategory'))->with('name' ,$name)->with('link_rewrite',$link_rewrite);
-
-        
-        //->where('contihogar_product_lang.name', 'like', '%'.$name.'%')->Paginate(6);
-        // $today = Carbon::today()->toDateString();
-        // echo $today;  
-        //var_dump(Carbon::now());
+       if($request->typeFilter == "cat"){
+            $itemCategory = DB::table('hogaryspacios_product')
+                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
+                            ->leftJoin('hogaryspacios_category_product', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_category_product.id_product');
+                            // ->where('hogaryspacios_category_lang.id_lang', '=' , $this->id_lang);
+            if ($request->fecha != "all")
+                $itemCategory->whereBetween('hogaryspacios_product.date_add',[$fecha1, $fecha2]);
+            $itemCategory->where('hogaryspacios_category_product.id_category', '=', $categoriaId);
+            if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
+                $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
+            $itemCategory->select('hogaryspacios_category_product.id_category',
+                            'hogaryspacios_category_product.id_product',
+                            'hogaryspacios_product_lang.name as producto',
+                            'hogaryspacios_product.price',
+                            'hogaryspacios_product.condition');
+        }
+        if($request->typeFilter == "name"){
+            $itemCategory = DB::table('hogaryspacios_product')
+                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product');
+            if ($request->fecha != "all")
+                $itemCategory->whereBetween('hogaryspacios_product.date_add',[$fecha1, $fecha2]);
+            $itemCategory->where('hogaryspacios_product_lang.name', 'like', '%'.$productName.'%');
+            if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
+                $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
+            $itemCategory->select('hogaryspacios_product_lang.name as producto',
+                                'hogaryspacios_product.price',
+                                'hogaryspacios_product.condition');
+        }
+        $itemCategory =  $itemCategory->paginate(6);
+        return response()->json($itemCategory, 200);
         
     }
-    public function busquedaPorPrecio(Request $request)
+    public function filterByPriceFromCategory(Request $request)
     {
-        $link_rewrite = "..." ;
-        $itemCategory;
+         $precioMin = (int) $request['precioMin'];
+         $precioMax = (int) $request['precioMax'];
+         $categoriaId =(int) $request['categoriaId'];
 
+
+        $itemCategory = DB::table('hogaryspacios_product')
+                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
+                            ->leftJoin('hogaryspacios_category_product', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_category_product.id_product')
+                        ->where('hogaryspacios_product.price', '>=', $precioMin)
+                        ->where('hogaryspacios_product.price', '<=', $precioMax)
+                        ->where('hogaryspacios_category_product.id_category', '=', $categoriaId);
+                        //->where('hogaryspacios_category_lang.id_lang', '=' , $this->id_lang);
+        
+        if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
+            $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
+
+        $result = $itemCategory->select('hogaryspacios_category_product.id_category',
+            'hogaryspacios_product.id_product',
+            'hogaryspacios_product_lang.name as producto',
+            'hogaryspacios_product.price',
+            'hogaryspacios_product.condition')->paginate(6);
+
+        return response()->json($result,200);
+    }
+    public function filterByPriceFromName(Request $request)
+    {
         $precioMin = (int) $request['precioMin'];
         $precioMax = (int) $request['precioMax'];
-        $categoriaId =(int) $request['categoriaId'];
-        $tipoBusqueda = $request['tipoBusqueda'];
         $productName = $request['name'];
+        $itemCategory = DB::table('hogaryspacios_product')
+                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
+                        ->where('hogaryspacios_product.price', '>=', $precioMin)
+                        ->where('hogaryspacios_product.price', '<=', $precioMax)
+                        ->where('hogaryspacios_product_lang.name', 'like', '%'.$productName.'%');
+                        //->where('hogaryspacios_category_lang.id_lang', '=' , $this->id_lang);
+        if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
+            $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
 
-        if($tipoBusqueda == "category"){
-            $itemCategory = DB::table('contihogar_product')
-            ->leftJoin('contihogar_product_lang', 'contihogar_product.id_product', '=' , 'contihogar_product_lang.id_product')
-            ->leftJoin('contihogar_category_product', 'contihogar_product.id_product', '=' , 'contihogar_category_product.id_product')
-            ->where('contihogar_product.price', '>=', $precioMin)
-            ->where('contihogar_product.price', '<=', $precioMax)
-            ->where('contihogar_category_product.id_category', '=', $categoriaId)
-            ->paginate(6);
-        }else{
-            $itemCategory = DB::table('contihogar_product')
-            ->leftJoin('contihogar_product_lang', 'contihogar_product.id_product', '=' , 'contihogar_product_lang.id_product')
-            ->where('contihogar_product.price', '>=', $precioMin)
-            ->where('contihogar_product.price', '<=', $precioMax)
-            ->where('contihogar_product_lang.name', 'like', '%'.$productName.'%')->Paginate(6);
-            //var_dump($itemCategory);
-        }
+        $result = $itemCategory->select('hogaryspacios_product.id_product',
+                                'hogaryspacios_product_lang.name as producto',
+                                'hogaryspacios_product.price',
+                                'hogaryspacios_product.condition')->paginate(6);
+        return response()->json($result,200);
+    }
+
+    public function byName($name)
+    {
+        $itemCategory = DB::table('hogaryspacios_product')
+        ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=', 'hogaryspacios_product_lang.id_product')
+        ->leftJoin('hogaryspacios_category', 'hogaryspacios_category.id_category', '=' , 'hogaryspacios_product.id_category_default')
+        ->leftJoin('hogaryspacios_category_lang', 'hogaryspacios_category.id_category', '=' , 'hogaryspacios_category_lang.id_category')
+        ->where('hogaryspacios_product_lang.name', 'like' , '%'.$name.'%')
+        ->select('hogaryspacios_category_lang.name as category',
+                'hogaryspacios_category.id_category',
+                'hogaryspacios_product.id_product',
+                'hogaryspacios_product_lang.name as producto',
+                'hogaryspacios_product.price',
+                'hogaryspacios_product.condition'
+                )
+        ->Paginate(6);
         
-        return view('templates.itemCategory', compact('itemCategory'))->with('name' ,$productName)->with('link_rewrite',$link_rewrite)->with('tipoBusqueda',$tipoBusqueda)->with('precioMin',$precioMin)->with('precioMax',$precioMax);
-        //return response()->json($itemCategory,200);
+        return response()->json($itemCategory,200);
+    }
+    public function filterglobal(Request $request)
+    {
+        $precioMin          =   (int) $request['precioMin'];
+        $precioMax          =   (int) $request['precioMax'];
+        $productName        =   $request['name'];
+        $categoriaId        =   (int) $request['categoriaId'];
+        $fecha1             =   Carbon::now();
+        $fecha2             =   Carbon::now();
+        $productName        =   $request['name'];
+        $itemCategory       =   [];
+        $sortBy             =   $request['_sort'];
+        $order              =   $request['_order'];
+
+        $itemCategory= DB::table('hogaryspacios_product')
+            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=', 'hogaryspacios_product_lang.id_product')
+            ->where('hogaryspacios_product.price', '>=', $precioMin)
+            ->where('hogaryspacios_product.price', '<=', $precioMax);
+        if(isset($productName)&& $productName != "")
+            $itemCategory->where('hogaryspacios_product_lang.name', 'like', '%'.$productName.'%');
+        if(isset($categoriaId) &&  $categoriaId != "")
+            $itemCategory->where('hogaryspacios_category_product.id_category', '=', $categoriaId);
+        if(isset($sortBy) && $sortBy != "")
+            $itemCategory->orderBy($sortBy,$order);
+        if(isset($fecha1,$fecha2)&& $fecha1 != null || $fecha2 != null)
+            $itemCategory->whereBetween($fecha1,$fecha2);
+        
+        $itemCategory = $itemCategory->paginate(6);
+
     }
 }

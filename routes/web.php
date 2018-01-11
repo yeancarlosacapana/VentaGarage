@@ -14,20 +14,8 @@
 //  Route::get('/', function () {
 //      return view('home',);
 //   });
-  Route::get('/' , 'CategoryController@index');
-//Route::get('/','CategoryController@index');
-//Route::resource('/category', 'CategoryController'); 
-//Route::get('slider', 'SliderController@index'); 
- Route::resource('itemCategory', 'CategoryProductController');
- Route::get('/search/{name}' , 'SearchController@index');
- Route::post('busqueda' , 'SearchController@forRedirect');
+ //Route::get('/filter-global/CategoryProductController@filterglobal');
 
- 
- Route::post('filtrarFecha','CategoryProductController@busquedaPorFecha');
-//  Route::post('filtrarPrecio', 'CategoryProductController@busquedaPorPrecio');
-// Route::match(['get'], 'filtrarPrecio',[
-//    'as' => 'filtrarPrecio',
-//    'uses' => 'CategoryProductController@busquedaPorPrecio' ]);
- Route::get('filtrarPrecio', 'CategoryProductController@busquedaPorPrecio');
-  
-  
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

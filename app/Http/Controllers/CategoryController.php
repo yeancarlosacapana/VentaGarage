@@ -9,7 +9,7 @@ use DB;
 use Config;
 class CategoryController extends Controller
 {
-    private $id_lang = 2;
+    private $id_lang = 1;
     /**
      * Display a listing of the resource.
      *
@@ -17,22 +17,38 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $oCategory = Category::with('CategoryLang')->where('level_depth','=','2')->orderBy('level_depth', 'asc')->get();
-        
-        $itemSlider = DB::table('contihogar_homeslider')
-        ->leftJoin('contihogar_homeslider_slides', 'contihogar_homeslider.id_homeslider_slides', '=', 'contihogar_homeslider_slides.id_homeslider_slides')
-        ->leftJoin('contihogar_homeslider_slides_lang', 'contihogar_homeslider.id_homeslider_slides', '=', 'contihogar_homeslider_slides_lang.id_homeslider_slides')
-        ->where('contihogar_homeslider_slides.active' , '=' , '1')
-        ->where('contihogar_homeslider_slides_lang.id_lang' , '>' , '1')
-        ->get();
-        foreach($itemSlider as $key=>$item){
+        $oCategory = Category::with('CategoryLang')
+                                ->where('level_depth','=','2')
+                                ->orderBy('level_depth', 'asc')->get();
+        return response()->json($oCategory,200);
+       //  $itemSlider = DB::table('hogaryspacios_homeslider')
+       //  ->leftJoin('hogaryspacios_homeslider_slides', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides.id_homeslider_slides')
+       //  ->leftJoin('hogaryspacios_homeslider_slides_lang', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides_lang.id_homeslider_slides')
+       //  ->where('hogaryspacios_homeslider_slides.active' , '=' , '1')
+       //  ->where('hogaryspacios_homeslider_slides_lang.id_lang' , '>' , '1')
+       //  ->get();
+       //  foreach($itemSlider as $key=>$item){
             
-            $itemSlider[$key]->url= Config::get('constants.hogaryspacios.url').$item->image;
-        }
-        //return response()->json($oCategory,200);
-       return view('templates.category', ['category' => $oCategory->toArray()],['slider' => $itemSlider->toArray()]);
+       //      $itemSlider[$key]->url= Config::get('constants.hogaryspacios.url').'/modules/ps_imageslider/images/'.$item->image;
+       //  }
+       //  //return response()->json($oCategory,200);
+       // return view('templates.category', ['category' => $oCategory->toArray()],['slider' => $itemSlider->toArray()]);
 
         
+    }
+    public function slider()
+    {
+        $itemSlider = DB::table('hogaryspacios_homeslider')
+        ->leftJoin('hogaryspacios_homeslider_slides', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides.id_homeslider_slides')
+        ->leftJoin('hogaryspacios_homeslider_slides_lang', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides_lang.id_homeslider_slides')
+        ->where('hogaryspacios_homeslider_slides.active' , '=' , '1')
+        ->where('hogaryspacios_homeslider_slides_lang.id_lang' , '>' , '1')
+        ->get();
+        foreach($itemSlider as $key=>$item)
+        {    
+            $itemSlider[$key]->url= Config::get('constants.hogaryspacios.url').'/modules/ps_imageslider/images/'.$item->image;
+        }
+        return response()->json($itemSlider,200);
     }
 
     /**
