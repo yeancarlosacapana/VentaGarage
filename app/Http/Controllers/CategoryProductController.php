@@ -56,19 +56,19 @@ class CategoryProductController extends Controller
      */
     public function show($id)
     {
-        $itemCategory = DB::table('hogaryspacios_product')
-                        ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
-                        ->leftJoin('hogaryspacios_category_product', 'hogaryspacios_category_product.id_product', '=', 'hogaryspacios_product.id_product')
-                        ->leftJoin('hogaryspacios_category', 'hogaryspacios_category.id_category', '=', 'hogaryspacios_category_product.id_category')
-                        ->leftJoin('hogaryspacios_category_lang', 'hogaryspacios_category_lang.id_category', '=' , 'hogaryspacios_category.id_category')
-                        ->where('hogaryspacios_category_product.id_category', '=' , $id)
+        $itemCategory = DB::table('product')
+                        ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
+                        ->leftJoin('category_product', 'category_product.id_product', '=', 'product.id_product')
+                        ->leftJoin('category', 'category.id_category', '=', 'category_product.id_category')
+                        ->leftJoin('category_lang', 'category_lang.id_category', '=' , 'category.id_category')
+                        ->where('category_product.id_category', '=' , $id)
                         //
-                        ->select('hogaryspacios_category_lang.name as category',
-                                'hogaryspacios_category_product.id_category',
-                                'hogaryspacios_category_product.id_product',
-                                'hogaryspacios_product_lang.name as producto',
-                                'hogaryspacios_product.price',
-                                'hogaryspacios_product.condition'
+                        ->select('category_lang.name as category',
+                                'category_product.id_category',
+                                'category_product.id_product',
+                                'product_lang.name as producto',
+                                'product.price',
+                                'product.condition'
                                 )
                         ->Paginate(6);
         return response()->json($itemCategory,200);
@@ -140,32 +140,32 @@ class CategoryProductController extends Controller
               break;    
        }
        if($request->typeFilter == "cat"){
-            $itemCategory = DB::table('hogaryspacios_product')
-                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
-                            ->leftJoin('hogaryspacios_category_product', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_category_product.id_product');
-                            // ->where('hogaryspacios_category_lang.id_lang', '=' , $this->id_lang);
+            $itemCategory = DB::table('product')
+                            ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
+                            ->leftJoin('category_product', 'product.id_product', '=' , 'category_product.id_product');
+                            // ->where('category_lang.id_lang', '=' , $this->id_lang);
             if ($request->fecha != "all")
-                $itemCategory->whereBetween('hogaryspacios_product.date_add',[$fecha1, $fecha2]);
-            $itemCategory->where('hogaryspacios_category_product.id_category', '=', $categoriaId);
+                $itemCategory->whereBetween('product.date_add',[$fecha1, $fecha2]);
+            $itemCategory->where('category_product.id_category', '=', $categoriaId);
             if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
                 $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
-            $itemCategory->select('hogaryspacios_category_product.id_category',
-                            'hogaryspacios_category_product.id_product',
-                            'hogaryspacios_product_lang.name as producto',
-                            'hogaryspacios_product.price',
-                            'hogaryspacios_product.condition');
+            $itemCategory->select('category_product.id_category',
+                            'category_product.id_product',
+                            'product_lang.name as producto',
+                            'product.price',
+                            'product.condition');
         }
         if($request->typeFilter == "name"){
-            $itemCategory = DB::table('hogaryspacios_product')
-                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product');
+            $itemCategory = DB::table('product')
+                            ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product');
             if ($request->fecha != "all")
-                $itemCategory->whereBetween('hogaryspacios_product.date_add',[$fecha1, $fecha2]);
-            $itemCategory->where('hogaryspacios_product_lang.name', 'like', '%'.$productName.'%');
+                $itemCategory->whereBetween('product.date_add',[$fecha1, $fecha2]);
+            $itemCategory->where('product_lang.name', 'like', '%'.$productName.'%');
             if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
                 $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
-            $itemCategory->select('hogaryspacios_product_lang.name as producto',
-                                'hogaryspacios_product.price',
-                                'hogaryspacios_product.condition');
+            $itemCategory->select('product_lang.name as producto',
+                                'product.price',
+                                'product.condition');
         }
         $itemCategory =  $itemCategory->paginate(6);
         return response()->json($itemCategory, 200);
@@ -178,22 +178,22 @@ class CategoryProductController extends Controller
          $categoriaId =(int) $request['categoriaId'];
 
 
-        $itemCategory = DB::table('hogaryspacios_product')
-                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
-                            ->leftJoin('hogaryspacios_category_product', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_category_product.id_product')
-                        ->where('hogaryspacios_product.price', '>=', $precioMin)
-                        ->where('hogaryspacios_product.price', '<=', $precioMax)
-                        ->where('hogaryspacios_category_product.id_category', '=', $categoriaId);
-                        //->where('hogaryspacios_category_lang.id_lang', '=' , $this->id_lang);
+        $itemCategory = DB::table('product')
+                            ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
+                            ->leftJoin('category_product', 'product.id_product', '=' , 'category_product.id_product')
+                        ->where('product.price', '>=', $precioMin)
+                        ->where('product.price', '<=', $precioMax)
+                        ->where('category_product.id_category', '=', $categoriaId);
+                        //->where('category_lang.id_lang', '=' , $this->id_lang);
         
         if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
             $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
 
-        $result = $itemCategory->select('hogaryspacios_category_product.id_category',
-            'hogaryspacios_product.id_product',
-            'hogaryspacios_product_lang.name as producto',
-            'hogaryspacios_product.price',
-            'hogaryspacios_product.condition')->paginate(6);
+        $result = $itemCategory->select('category_product.id_category',
+            'product.id_product',
+            'product_lang.name as producto',
+            'product.price',
+            'product.condition')->paginate(6);
 
         return response()->json($result,200);
     }
@@ -202,35 +202,35 @@ class CategoryProductController extends Controller
         $precioMin = (int) $request['precioMin'];
         $precioMax = (int) $request['precioMax'];
         $productName = $request['name'];
-        $itemCategory = DB::table('hogaryspacios_product')
-                            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
-                        ->where('hogaryspacios_product.price', '>=', $precioMin)
-                        ->where('hogaryspacios_product.price', '<=', $precioMax)
-                        ->where('hogaryspacios_product_lang.name', 'like', '%'.$productName.'%');
-                        //->where('hogaryspacios_category_lang.id_lang', '=' , $this->id_lang);
+        $itemCategory = DB::table('product')
+                            ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
+                        ->where('product.price', '>=', $precioMin)
+                        ->where('product.price', '<=', $precioMax)
+                        ->where('product_lang.name', 'like', '%'.$productName.'%');
+                        //->where('category_lang.id_lang', '=' , $this->id_lang);
         if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
             $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
 
-        $result = $itemCategory->select('hogaryspacios_product.id_product',
-                                'hogaryspacios_product_lang.name as producto',
-                                'hogaryspacios_product.price',
-                                'hogaryspacios_product.condition')->paginate(6);
+        $result = $itemCategory->select('product.id_product',
+                                'product_lang.name as producto',
+                                'product.price',
+                                'product.condition')->paginate(6);
         return response()->json($result,200);
     }
 
     public function byName($name)
     {
-        $itemCategory = DB::table('hogaryspacios_product')
-        ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=', 'hogaryspacios_product_lang.id_product')
-        ->leftJoin('hogaryspacios_category', 'hogaryspacios_category.id_category', '=' , 'hogaryspacios_product.id_category_default')
-        ->leftJoin('hogaryspacios_category_lang', 'hogaryspacios_category.id_category', '=' , 'hogaryspacios_category_lang.id_category')
-        ->where('hogaryspacios_product_lang.name', 'like' , '%'.$name.'%')
-        ->select('hogaryspacios_category_lang.name as category',
-                'hogaryspacios_category.id_category',
-                'hogaryspacios_product.id_product',
-                'hogaryspacios_product_lang.name as producto',
-                'hogaryspacios_product.price',
-                'hogaryspacios_product.condition'
+        $itemCategory = DB::table('product')
+        ->leftJoin('product_lang', 'product.id_product', '=', 'product_lang.id_product')
+        ->leftJoin('category', 'category.id_category', '=' , 'product.id_category_default')
+        ->leftJoin('category_lang', 'category.id_category', '=' , 'category_lang.id_category')
+        ->where('product_lang.name', 'like' , '%'.$name.'%')
+        ->select('category_lang.name as category',
+                'category.id_category',
+                'product.id_product',
+                'product_lang.name as producto',
+                'product.price',
+                'product.condition'
                 )
         ->Paginate(6);
         
@@ -249,14 +249,14 @@ class CategoryProductController extends Controller
         $sortBy             =   $request['_sort'];
         $order              =   $request['_order'];
 
-        $itemCategory= DB::table('hogaryspacios_product')
-            ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=', 'hogaryspacios_product_lang.id_product')
-            ->where('hogaryspacios_product.price', '>=', $precioMin)
-            ->where('hogaryspacios_product.price', '<=', $precioMax);
+        $itemCategory= DB::table('product')
+            ->leftJoin('product_lang', 'product.id_product', '=', 'product_lang.id_product')
+            ->where('product.price', '>=', $precioMin)
+            ->where('product.price', '<=', $precioMax);
         if(isset($productName)&& $productName != "")
-            $itemCategory->where('hogaryspacios_product_lang.name', 'like', '%'.$productName.'%');
+            $itemCategory->where('product_lang.name', 'like', '%'.$productName.'%');
         if(isset($categoriaId) &&  $categoriaId != "")
-            $itemCategory->where('hogaryspacios_category_product.id_category', '=', $categoriaId);
+            $itemCategory->where('category_product.id_category', '=', $categoriaId);
         if(isset($sortBy) && $sortBy != "")
             $itemCategory->orderBy($sortBy,$order);
         if(isset($fecha1,$fecha2)&& $fecha1 != null || $fecha2 != null)

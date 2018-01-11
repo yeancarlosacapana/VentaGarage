@@ -111,10 +111,10 @@ class ProductController extends Controller
     public function show($id)
     {
 
-        $productById = DB::table('hogaryspacios_product')
-        ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
-        ->where('hogaryspacios_product.id_product','=',$id)
-        ->where('hogaryspacios_product_lang.id_lang','=',$this->id_lang)
+        $productById = DB::table('product')
+        ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
+        ->where('product.id_product','=',$id)
+        ->where('product_lang.id_lang','=',$this->id_lang)
         ->get();
         return response()->json($productById,200);
     }

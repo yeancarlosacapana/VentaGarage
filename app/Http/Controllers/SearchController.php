@@ -17,9 +17,9 @@ class SearchController extends Controller
         // $tipoBusqueda = "name"; 
         // $precioMin = 0;
         // $precioMax = 1000; 
-        $itemCategory = DB::table('hogaryspacios_product')
-        ->leftJoin('hogaryspacios_product_lang', 'hogaryspacios_product.id_product', '=' , 'hogaryspacios_product_lang.id_product')
-        ->where('hogaryspacios_product_lang.name', 'like', '%'.$name.'%')->Paginate(6);
+        $itemCategory = DB::table('product')
+        ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
+        ->where('product_lang.name', 'like', '%'.$name.'%')->Paginate(6);
         return response()->json($itemCategory,200);
         //return view('templates.search',  compact('search'));
 

@@ -21,11 +21,11 @@ class CategoryController extends Controller
                                 ->where('level_depth','=','2')
                                 ->orderBy('level_depth', 'asc')->get();
         return response()->json($oCategory,200);
-       //  $itemSlider = DB::table('hogaryspacios_homeslider')
-       //  ->leftJoin('hogaryspacios_homeslider_slides', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides.id_homeslider_slides')
-       //  ->leftJoin('hogaryspacios_homeslider_slides_lang', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides_lang.id_homeslider_slides')
-       //  ->where('hogaryspacios_homeslider_slides.active' , '=' , '1')
-       //  ->where('hogaryspacios_homeslider_slides_lang.id_lang' , '>' , '1')
+       //  $itemSlider = DB::table('homeslider')
+       //  ->leftJoin('homeslider_slides', 'homeslider.id_homeslider_slides', '=', 'homeslider_slides.id_homeslider_slides')
+       //  ->leftJoin('homeslider_slides_lang', 'homeslider.id_homeslider_slides', '=', 'homeslider_slides_lang.id_homeslider_slides')
+       //  ->where('homeslider_slides.active' , '=' , '1')
+       //  ->where('homeslider_slides_lang.id_lang' , '>' , '1')
        //  ->get();
        //  foreach($itemSlider as $key=>$item){
             
@@ -38,11 +38,11 @@ class CategoryController extends Controller
     }
     public function slider()
     {
-        $itemSlider = DB::table('hogaryspacios_homeslider')
-        ->leftJoin('hogaryspacios_homeslider_slides', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides.id_homeslider_slides')
-        ->leftJoin('hogaryspacios_homeslider_slides_lang', 'hogaryspacios_homeslider.id_homeslider_slides', '=', 'hogaryspacios_homeslider_slides_lang.id_homeslider_slides')
-        ->where('hogaryspacios_homeslider_slides.active' , '=' , '1')
-        ->where('hogaryspacios_homeslider_slides_lang.id_lang' , '>' , '1')
+        $itemSlider = DB::table('homeslider')
+        ->leftJoin('homeslider_slides', 'homeslider.id_homeslider_slides', '=', 'homeslider_slides.id_homeslider_slides')
+        ->leftJoin('homeslider_slides_lang', 'homeslider.id_homeslider_slides', '=', 'homeslider_slides_lang.id_homeslider_slides')
+        ->where('homeslider_slides.active' , '=' , '1')
+        ->where('homeslider_slides_lang.id_lang' , '>' , '1')
         ->get();
         foreach($itemSlider as $key=>$item)
         {    
