@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 
 });
-Route::get('/' , 'CategoryController@index');
+Route::get('/category' , 'CategoryController@index');
 Route::get('/slider','CategoryController@slider');
 Route::resource('itemCategory', 'CategoryProductController');
 Route::get('/search/{name}' , 'CategoryProductController@byName');
