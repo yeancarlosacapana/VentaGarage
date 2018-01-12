@@ -11,6 +11,7 @@ use App\ProductLang;
 use Carbon\Carbon;
 use App\Image;
 use DB;
+use Config;
 class ProductController extends Controller
 {
     private $id_lang = 2;
@@ -23,6 +24,7 @@ class ProductController extends Controller
     {
         $oCategory = Category::with('CategoryLang')
                                 ->where('level_depth','>','1')
+                                ->where('active','=',1)
                                 ->orderBy('level_depth', 'asc')->get();
         return response()->json($oCategory,200);
     }
@@ -113,9 +115,27 @@ class ProductController extends Controller
 
         $productById = DB::table('product')
         ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
+        ->leftJoin('image','product.id_product','=','image.id_product')
         ->where('product.id_product','=',$id)
         ->where('product_lang.id_lang','=',$this->id_lang)
-        ->get();
+        ->select('product_lang.name as producto',
+                                'product.id_category_default',
+                                'product.price',
+                                'product_lang.description as descripcion',
+                                'product.width',
+                                'product.height',
+                                'product.depth',
+                                'product.condition',
+                                'image.id_image',
+                                'product.id_product'
+                                )
+        ->first();
+        $images =  Image::where('id_product','=',$productById->id_product)->get();
+        foreach($images as $key=>$image)
+        {    
+            $images[$key]->urlImage = Config::get('constants.images.url').$image->id_image.'.jpg';
+        }
+        $productById->image = $images;
         return response()->json($productById,200);
     }
 

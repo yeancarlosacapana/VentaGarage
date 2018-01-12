@@ -21,6 +21,10 @@ class CategoryController extends Controller
                                 ->where('level_depth','=','2')
                                 ->where('active','=',1)
                                 ->orderBy('level_depth', 'asc')->get();
+                                foreach($oCategory as $key=>$item)
+        {    
+            $oCategory[$key]->url= Config::get('constants.hogaryspacios.url').'/img/c/'.$item->id_category.'.jpg';
+        }
         return response()->json($oCategory,200);
        //  $itemSlider = DB::table('homeslider')
        //  ->leftJoin('homeslider_slides', 'homeslider.id_homeslider_slides', '=', 'homeslider_slides.id_homeslider_slides')
