@@ -1,9 +1,9 @@
 <?php
 return[
     'hogaryspacios'=>[
-        'url' => 'http://127.0.0.1/hogaryspacios'
+        'url' => 'http://apigarage.hogaryspacios.com/'
     ],
     'images'=>[
-        'url' => 'http://127.0.0.1:8000/storage/'
+        'url' => 'http://apigarage.hogaryspacios.com/storage/'
     ]
     ];
