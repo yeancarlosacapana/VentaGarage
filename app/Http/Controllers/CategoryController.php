@@ -19,6 +19,7 @@ class CategoryController extends Controller
     {
         $oCategory = Category::with('CategoryLang')
                                 ->where('level_depth','=','2')
+                                ->where('active','=',1)
                                 ->orderBy('level_depth', 'asc')->get();
         return response()->json($oCategory,200);
        //  $itemSlider = DB::table('homeslider')

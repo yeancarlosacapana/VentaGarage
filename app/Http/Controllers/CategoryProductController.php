@@ -62,6 +62,7 @@ class CategoryProductController extends Controller
                         ->leftJoin('category', 'category.id_category', '=', 'category_product.id_category')
                         ->leftJoin('category_lang', 'category_lang.id_category', '=' , 'category.id_category')
                         ->where('category_product.id_category', '=' , $id)
+                        ->where('product.active','=','1')
                         //
                         ->select('category_lang.name as category',
                                 'category_product.id_category',
@@ -143,7 +144,7 @@ class CategoryProductController extends Controller
             $itemCategory = DB::table('product')
                             ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
                             ->leftJoin('category_product', 'product.id_product', '=' , 'category_product.id_product');
-                            // ->where('category_lang.id_lang', '=' , $this->id_lang);
+                            ->where('product.active', '=' , 1);
             if ($request->fecha != "all")
                 $itemCategory->whereBetween('product.date_add',[$fecha1, $fecha2]);
             $itemCategory->where('category_product.id_category', '=', $categoriaId);
@@ -184,7 +185,7 @@ class CategoryProductController extends Controller
                         ->where('product.price', '>=', $precioMin)
                         ->where('product.price', '<=', $precioMax)
                         ->where('category_product.id_category', '=', $categoriaId);
-                        //->where('category_lang.id_lang', '=' , $this->id_lang);
+                        ->where('product.active', '=' , 1);
         
         if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
             $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
@@ -206,6 +207,7 @@ class CategoryProductController extends Controller
                             ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
                         ->where('product.price', '>=', $precioMin)
                         ->where('product.price', '<=', $precioMax)
+                        ->where('product','=',1)
                         ->where('product_lang.name', 'like', '%'.$productName.'%');
                         //->where('category_lang.id_lang', '=' , $this->id_lang);
         if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
@@ -225,6 +227,7 @@ class CategoryProductController extends Controller
         ->leftJoin('category', 'category.id_category', '=' , 'product.id_category_default')
         ->leftJoin('category_lang', 'category.id_category', '=' , 'category_lang.id_category')
         ->where('product_lang.name', 'like' , '%'.$name.'%')
+        ->where('product.active','=',1)
         ->select('category_lang.name as category',
                 'category.id_category',
                 'product.id_product',
@@ -252,7 +255,8 @@ class CategoryProductController extends Controller
         $itemCategory= DB::table('product')
             ->leftJoin('product_lang', 'product.id_product', '=', 'product_lang.id_product')
             ->where('product.price', '>=', $precioMin)
-            ->where('product.price', '<=', $precioMax);
+            ->where('product.price', '<=', $precioMax)
+            ->where('product.active','=',1);
         if(isset($productName)&& $productName != "")
             $itemCategory->where('product_lang.name', 'like', '%'.$productName.'%');
         if(isset($categoriaId) &&  $categoriaId != "")
