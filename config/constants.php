@@ -1,7 +1,7 @@
 <?php
 return[
     'hogaryspacios'=>[
-        'url' => 'http://apigarage.hogaryspacios.com/'
+        'url' => 'https://hogaryspacios.com'
     ],
     'images'=>[
         'url' => 'http://apigarage.hogaryspacios.com/storage/'
