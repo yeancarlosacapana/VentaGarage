@@ -167,7 +167,7 @@ class CategoryProductController extends Controller
                             'category_product.id_product',
                             'product_lang.name as producto',
                             'product.price',
-                            'product.condition');
+                            'product.condition',DB::raw('(select id_image from '.DB::getTablePrefix().'image where id_product = '. DB::getTablePrefix().'product.id_product limit 1) as id_image'));
         }
         if($request->typeFilter == "name"){
             $itemCategory = DB::table('product')
@@ -180,9 +180,16 @@ class CategoryProductController extends Controller
                 $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
             $itemCategory->select('product_lang.name as producto',
                                 'product.price',
-                                'product.condition');
+                                'product.condition',
+                                DB::raw('(select id_image from '.DB::getTablePrefix().'image where id_product = '. DB::getTablePrefix().'product.id_product limit 1) as id_image'));
         }
         $itemCategory =  $itemCategory->get();
+        foreach($itemCategory as $key=>$item)
+                        {    
+                            //var_dump($item);
+                            $itemCategory[$key]->url= Config::get('constants.images.url').$item->id_image.'.jpg';
+                            //$itemCategory[$key]->url = config::get('constants.hogaryspacios.url').implode($item->id_product).'.jpg';
+                        }
         return response()->json($itemCategory, 200);
         
     }
@@ -208,8 +215,15 @@ class CategoryProductController extends Controller
             'product.id_product',
             'product_lang.name as producto',
             'product.price',
-            'product.condition')->get();
-
+            'product.condition',
+            DB::raw('(select id_image from '.DB::getTablePrefix().'image where id_product = '. DB::getTablePrefix().'product.id_product limit 1) as id_image'))
+            ->get();
+            foreach($result as $key=>$item)
+            {    
+                //var_dump($item);
+                $result[$key]->url= Config::get('constants.images.url').$item->id_image.'.jpg';
+                //$itemCategory[$key]->url = config::get('constants.hogaryspacios.url').implode($item->id_product).'.jpg';
+            }
         return response()->json($result,200);
     }
     public function filterByPriceFromName(Request $request)
@@ -230,7 +244,15 @@ class CategoryProductController extends Controller
         $result = $itemCategory->select('product.id_product',
                                 'product_lang.name as producto',
                                 'product.price',
-                                'product.condition')->get();
+                                'product.condition',
+                                DB::raw('(select id_image from '.DB::getTablePrefix().'image where id_product = '. DB::getTablePrefix().'product.id_product limit 1) as id_image'))
+                                ->get();
+                                foreach($result as $key=>$item)
+                        {    
+                            //var_dump($item);
+                            $result[$key]->url= Config::get('constants.images.url').$item->id_image.'.jpg';
+                            //$itemCategory[$key]->url = config::get('constants.hogaryspacios.url').implode($item->id_product).'.jpg';
+                        }
         return response()->json($result,200);
     }
 
@@ -250,10 +272,15 @@ class CategoryProductController extends Controller
                 'product.id_product',
                 'product_lang.name as producto',
                 'product.price',
-                'product.condition'
-                )
+                'product.condition',
+                DB::raw('(select id_image from '.DB::getTablePrefix().'image where id_product = '. DB::getTablePrefix().'product.id_product limit 1) as id_image'))
         ->get();
-        
+        foreach($itemCategory as $key=>$item)
+                        {    
+                            //var_dump($item);
+                            $itemCategory[$key]->url= Config::get('constants.images.url').$item->id_image.'.jpg';
+                            //$itemCategory[$key]->url = config::get('constants.hogaryspacios.url').implode($item->id_product).'.jpg';
+                        }
         return response()->json($itemCategory,200);
     }
     public function filterglobal(Request $request)
