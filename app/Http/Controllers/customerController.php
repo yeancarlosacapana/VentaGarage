@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Customer;
 use App\Address;
 use Carbon\Carbon;
+use DB;
 class customerController extends Controller
 {
     public function registerCustomer(Request $request)
@@ -50,6 +51,14 @@ class customerController extends Controller
     }
     public function loginCustomer(Request $request)
     {
-        
+        $eLoginCustomer = $request;
+        $ologinCustomer = DB::table('customer')
+                        ->where('email','=',$eLoginCustomer['email'])
+                        ->where('passwd','=',$eLoginCustomer['passwd'])
+                        ->where('active','=',1)
+                        ->select('email','id_customer','firstname','lastname',DB::raw('1 as is_logged'))
+                        ->first();
+                        
+        return response()->json($ologinCustomer,200);
     }
 }

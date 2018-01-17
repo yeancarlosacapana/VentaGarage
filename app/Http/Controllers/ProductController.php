@@ -10,6 +10,7 @@ use App\Product;
 use App\ProductLang;
 use Carbon\Carbon;
 use App\Image;
+use App\CustomerProduct;
 use DB;
 use Config;
 class ProductController extends Controller
@@ -42,10 +43,12 @@ class ProductController extends Controller
         $mProduct->save();
         $oProductLang = $eProduct['productLang'];
         $oImages = $eProduct['imgData'];
+        $oCustomerProduct = $eProduct['customerProduct'];
     
         $this->addProductLang($oProductLang,$mProduct->id_product);
         $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product);
         $this->addImages($oImages,$mProduct->id_product);
+        $this->addCustomerProduct($mProduct->id_product,$oCustomerProduct['id_customer']);
 
         return response()->json($mProduct, 200);
         
@@ -60,6 +63,13 @@ class ProductController extends Controller
        $mProductLang->link_rewrite=$oProductLang['name'];
        $mProductLang->name=$oProductLang['name'];
        $mProductLang->save();
+    }
+    public function addCustomerProduct($id_product,$id_customer)
+    {
+        $mCustomerProduct = new CustomerProduct();
+        $mCustomerProduct->id_product = $id_product;
+        $mCustomerProduct->id_customer=$id_customer;
+        $mCustomerProduct->save();
     }
     public function addImages($oImages,$id_product)
     {

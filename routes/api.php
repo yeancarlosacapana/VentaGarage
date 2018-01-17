@@ -28,3 +28,4 @@ Route::get('/itemProduct/{id}','ProductController@show');
 Route::get('/getCategory','ProductController@index');
 Route::post('register','customerController@registerCustomer');
 Route::post('product','ProductController@addProduct');
+Route::post('loginCustomer/','customerController@loginCustomer');

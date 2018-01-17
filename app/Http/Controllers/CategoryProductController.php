@@ -65,7 +65,7 @@ class CategoryProductController extends Controller
                         ->leftJoin('category_product', 'category_product.id_product', '=', 'product.id_product')
                         ->leftJoin('category', 'category.id_category', '=', 'category_product.id_category')
                         ->leftJoin('category_lang', 'category_lang.id_category', '=' , 'category.id_category')
-                        ->leftJoin('image','product.id_product','=','image.id_product')
+                        //->leftJoin('image','product.id_product','=','image.id_product')
                         ->where('product_lang.id_lang','=',2)
                         ->where('category_lang.id_lang','=',2)
                         ->where('category_product.id_category', '=' , $id)
@@ -76,9 +76,9 @@ class CategoryProductController extends Controller
                                 'product_lang.name as producto',
                                 'product.price',
                                 'product.condition',
-                                'image.id_image'
+                                DB::raw('(select id_image from '.DB::getTablePrefix().'image where id_product = '. DB::getTablePrefix().'product.id_product limit 1) as id_image')
                                 )
-                        ->Paginate(6);
+                        ->get();
                         foreach($itemCategory as $key=>$item)
                         {    
                             //var_dump($item);
@@ -182,7 +182,7 @@ class CategoryProductController extends Controller
                                 'product.price',
                                 'product.condition');
         }
-        $itemCategory =  $itemCategory->paginate(6);
+        $itemCategory =  $itemCategory->get();
         return response()->json($itemCategory, 200);
         
     }
@@ -208,7 +208,7 @@ class CategoryProductController extends Controller
             'product.id_product',
             'product_lang.name as producto',
             'product.price',
-            'product.condition')->paginate(6);
+            'product.condition')->get();
 
         return response()->json($result,200);
     }
@@ -230,7 +230,7 @@ class CategoryProductController extends Controller
         $result = $itemCategory->select('product.id_product',
                                 'product_lang.name as producto',
                                 'product.price',
-                                'product.condition')->paginate(6);
+                                'product.condition')->get();
         return response()->json($result,200);
     }
 
@@ -252,7 +252,7 @@ class CategoryProductController extends Controller
                 'product.price',
                 'product.condition'
                 )
-        ->Paginate(6);
+        ->get();
         
         return response()->json($itemCategory,200);
     }
@@ -282,7 +282,7 @@ class CategoryProductController extends Controller
         if(isset($fecha1,$fecha2)&& $fecha1 != null || $fecha2 != null)
             $itemCategory->whereBetween($fecha1,$fecha2);
         
-        $itemCategory = $itemCategory->paginate(6);
+        $itemCategory = $itemCategory->get();
 
     }
 }
