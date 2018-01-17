@@ -14,11 +14,12 @@ class customerController extends Controller
        $eCustomer = $request;
        $mCustomer = new Customer();
        $mCustomer->id_gender = 0;
+       $mCustomer->active = 1;
        $mCustomer->company = $eCustomer["company"];
        $mCustomer->firstname = $eCustomer["firstname"];
        $mCustomer->lastname = $eCustomer["lastname"];
        $mCustomer->email = $eCustomer["email"];
-       $mCustomer->passwd = $eCustomer["passwd"];
+       $mCustomer->passwd = md5($eCustomer["passwd"]);
        $mCustomer->date_add=Carbon::now();
        $mCustomer->date_upd=Carbon::now();
        $mCustomer->save();
@@ -54,7 +55,7 @@ class customerController extends Controller
         $eLoginCustomer = $request;
         $ologinCustomer = DB::table('customer')
                         ->where('email','=',$eLoginCustomer['email'])
-                        ->where('passwd','=',$eLoginCustomer['passwd'])
+                        ->where('passwd','=',md5($eLoginCustomer['passwd']))
                         ->where('active','=',1)
                         ->select('email','id_customer','firstname','lastname',DB::raw('1 as is_logged'))
                         ->first();
