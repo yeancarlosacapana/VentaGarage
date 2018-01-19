@@ -16,6 +16,7 @@ use Config;
 class ProductController extends Controller
 {
     private $id_lang = 2;
+    private $registerMax = 3;
     /**
      * Display a listing of the resource.
      *
@@ -29,29 +30,36 @@ class ProductController extends Controller
                                 ->orderBy('level_depth', 'asc')->get();
         return response()->json($oCategory,200);
     }
-
     public function addProduct(Request $request)
     {
         $eProduct = $request;
-        $mProduct = new Product();
-        $mProduct->id_tax_rules_group = 1;
-        $mProduct->id_category_default = $eProduct["id_category_default"];
-        $mProduct->price = $eProduct["price"];
-        $mProduct->condition = $eProduct["condition"];
-        $mProduct->date_add=Carbon::now();
-        $mProduct->date_upd=Carbon::now();
-        $mProduct->save();
-        $oProductLang = $eProduct['productLang'];
-        $oImages = $eProduct['imgData'];
         $oCustomerProduct = $eProduct['customerProduct'];
-    
-        $this->addProductLang($oProductLang,$mProduct->id_product);
-        $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product);
-        $this->addImages($oImages,$mProduct->id_product);
-        $this->addCustomerProduct($mProduct->id_product,$oCustomerProduct['id_customer']);
+        $cuenta = DB::table('customer_product')
+        ->where('id_customer','=',$oCustomerProduct['id_customer'])
+        ->count('id_customer');
+        if($cuenta <= $this->registerMax){
+            $mProduct = new Product();
+            $mProduct->id_tax_rules_group = 1;
+            $mProduct->id_category_default = $eProduct["id_category_default"];
+            $mProduct->price = $eProduct["price"];
+            $mProduct->condition = 'used';
+            $mProduct->date_add=Carbon::now();
+            $mProduct->date_upd=Carbon::now();
+            $mProduct->save();
+            $oProductLang = $eProduct['productLang'];
+            $oImages = $eProduct['imgData'];
+            
+            
+            $this->addProductLang($oProductLang,$mProduct->id_product);
+            $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product);
+            $this->addImages($oImages,$mProduct->id_product);
+            $this->addCustomerProduct($mProduct->id_product,$oCustomerProduct['id_customer']);
 
-        return response()->json($mProduct, 200);
-        
+            return response()->json($mProduct, 200);
+        }else{
+            //return var_dump('a alcansado el limite de registro');
+            return response()->json(array("resp"=>"a alcansado el limite de registro"), 200);
+        }
     }
     public function addProductLang($oProductLang,$id_product)
     {
