@@ -33,15 +33,16 @@ class customerController extends Controller
     {
        $mAddress = new Address();
        $mAddress->id_country = 171;
-       $mAddress->id_state=$oAddress['state'];;
-       $mAddress->id_distrito=$oAddress['distrito'];;
-       $mAddress->id_provincia=$oAddress['provincia'];;
+       $mAddress->id_state=$oAddress['state'];
+       $mAddress->id_distrito=$oAddress['distrito'];
+       $mAddress->id_provincia=$oAddress['provincia'];
        $mAddress->id_customer = $id_customer; 
        $mAddress->alias='direccion'.$id_customer;
        $mAddress->company=$oAddress['company'];
        $mAddress->lastname=$oAddress['lastname'];
        $mAddress->firstname=$oAddress['firstname'];
        $mAddress->address1=$oAddress['address1'];
+       $mAddress->city=$oAddress['provincia'];
        $mAddress->phone=$oAddress['phone'];
        $mAddress->phone_mobile=$oAddress['phone_mobile'];
        $mAddress->dni=$oAddress['dni'];
