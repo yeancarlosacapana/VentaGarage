@@ -283,6 +283,18 @@ class CategoryProductController extends Controller
                         }
         return response()->json($itemCategory,200);
     }
+
+    public function showCategoryByIdCategory($id_category)
+    {
+        $categoryLang = DB::table('category')
+                            ->leftJoin('category_lang','category.id_category','=','category_lang.id_category')
+                            ->where('category.id_parent','=',$id_category)
+                            ->where('category_lang.id_lang','=',2)
+                            ->get();
+        
+        return response()->json($categoryLang, 200);
+    }
+
     public function filterglobal(Request $request)
     {
         $precioMin          =   (int) $request['precioMin'];

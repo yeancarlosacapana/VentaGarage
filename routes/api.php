@@ -24,6 +24,7 @@ Route::get('/search/{name}' , 'CategoryProductController@byName');
 Route::get('/filterPriceCategory' , 'CategoryProductController@filterByPriceFromCategory');
 Route::get('/filterPriceName' , 'CategoryProductController@filterByPriceFromName');
 Route::get('/filtrarFecha','CategoryProductController@busquedaPorFecha');
+Route::get('/subcategoria','CategoryProductController@showCategoryByIdCategory');
 Route::get('/itemProduct/{id}','ProductController@show');
 Route::get('/getCategory','ProductController@index');
 Route::post('register','customerController@registerCustomer');
