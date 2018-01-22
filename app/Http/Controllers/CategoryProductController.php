@@ -205,6 +205,7 @@ class CategoryProductController extends Controller
                             ->leftJoin('category_product', 'product.id_product', '=' , 'category_product.id_product')
                         ->where('product.price', '>=', $precioMin)
                         ->where('product.price', '<=', $precioMax)
+                        ->whereIn('product.condition',array('used','refurbished'));
                         ->where('category_product.id_category', '=', $categoriaId);
                         
         
@@ -236,6 +237,7 @@ class CategoryProductController extends Controller
                         ->where('product.price', '>=', $precioMin)
                         ->where('product.price', '<=', $precioMax)
                         ->where('product_lang.id_lang','=',2)
+                        ->whereIn('product.condition',array('used','refurbished'));
                         ->where('product_lang.name', 'like', '%'.$productName.'%');
                         //->where('category_lang.id_lang', '=' , $this->id_lang);
         if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
@@ -290,6 +292,7 @@ class CategoryProductController extends Controller
                             ->leftJoin('category_lang','category.id_category','=','category_lang.id_category')
                             ->where('category.id_parent','=',$id_category)
                             ->where('category_lang.id_lang','=',2)
+                            ->whereIn('product.condition',array('used','refurbished'))
                             ->select('category.id_category',
                                     'category_lang.name',
                                     'category.id_parent',
@@ -314,6 +317,7 @@ class CategoryProductController extends Controller
 
         $itemCategory= DB::table('product')
             ->leftJoin('product_lang', 'product.id_product', '=', 'product_lang.id_product')
+            ->whereIn('product.condition',array('used','refurbished'))
             ->where('product.price', '>=', $precioMin)
             ->where('product.price', '<=', $precioMax);
         if(isset($productName)&& $productName != "")
