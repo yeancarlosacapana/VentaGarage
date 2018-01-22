@@ -290,6 +290,10 @@ class CategoryProductController extends Controller
                             ->leftJoin('category_lang','category.id_category','=','category_lang.id_category')
                             ->where('category.id_parent','=',$id_category)
                             ->where('category_lang.id_lang','=',2)
+                            ->select('category.id_category',
+                                    'category_lang.name',
+                                    'category.id_parent',
+                                    'category.active')
                             ->get();
         
         return response()->json($categoryLang, 200);
