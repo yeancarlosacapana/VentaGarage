@@ -42,7 +42,6 @@ class customerController extends Controller
        $mAddress->lastname=$oAddress['lastname'];
        $mAddress->firstname=$oAddress['firstname'];
        $mAddress->address1=$oAddress['address1'];
-       $mAddress->city=$oAddress['city'];
        $mAddress->phone=$oAddress['phone'];
        $mAddress->phone_mobile=$oAddress['phone_mobile'];
        $mAddress->dni=$oAddress['dni'];
