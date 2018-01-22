@@ -29,3 +29,6 @@ Route::get('/getCategory','ProductController@index');
 Route::post('register','customerController@registerCustomer');
 Route::post('product','ProductController@addProduct');
 Route::post('loginCustomer/','customerController@loginCustomer');
+Route::resource('/state', 'StateController');
+Route::resource('/provincia/{id_state}', 'ProvinciaController');
+Route::resource('/distrito/{id_provincia}', 'DistritoController');
