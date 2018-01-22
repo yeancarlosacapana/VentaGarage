@@ -67,6 +67,7 @@ class ProductController extends Controller
         $mProductLang->id_product = $id_product;
         $mProductLang->id_lang=2;
        $mProductLang->description=$oProductLang['description'];
+       $mProductLang->inst_message='Producto no disponible en stock';
        $mProductLang->description_short=$oProductLang['description'];
        $mProductLang->link_rewrite=$oProductLang['name'];
        $mProductLang->name=$oProductLang['name'];
