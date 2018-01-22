@@ -159,7 +159,7 @@ class CategoryProductController extends Controller
                             ->leftJoin('category_product', 'product.id_product', '=' , 'category_product.id_product')
                             ->whereIn('product.condition',array('used','refurbished'));
             if ($request->fecha != "all")
-                $itemCategory->whereBetween('product.date_add',[$fecha1, $fecha2]);
+                $itemCategory->whereBetween(DB::raw('DATE(product.date_add)'),[$fecha1, $fecha2]);
             $itemCategory->where('category_product.id_category', '=', $categoriaId);
             if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
                 $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
@@ -174,7 +174,7 @@ class CategoryProductController extends Controller
                             ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
                             ->whereIn('product.condition',array('used','refurbished'));
             if ($request->fecha != "all")
-                $itemCategory->whereBetween('product.date_add',[$fecha1, $fecha2]);
+                $itemCategory->whereBetween(DB::raw('DATE(product.date_add)'),[$fecha1, $fecha2]);
             $itemCategory->where('product_lang.name', 'like', '%'.$productName.'%');
             if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
                 $itemCategory->orderBy(explode('|',$request['_sort'])[0],explode('|',$request['_sort'])[1]);
