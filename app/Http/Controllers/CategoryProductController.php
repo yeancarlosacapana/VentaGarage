@@ -154,7 +154,7 @@ class CategoryProductController extends Controller
               break;    
        }
        if($request->typeFilter == "cat"){
-            $itemCategory = DB::table('product')
+            $itemCategory = DB::table('products')
                             ->leftJoin('product_lang', 'product.id_product', '=' , 'product_lang.id_product')
                             ->leftJoin('category_product', 'product.id_product', '=' , 'category_product.id_product')
                             ->whereIn('product.condition',array('used','refurbished'));
