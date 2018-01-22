@@ -205,7 +205,7 @@ class CategoryProductController extends Controller
                             ->leftJoin('category_product', 'product.id_product', '=' , 'category_product.id_product')
                         ->where('product.price', '>=', $precioMin)
                         ->where('product.price', '<=', $precioMax)
-                        ->whereIn('product.condition',array('used','refurbished'));
+                        ->whereIn('product.condition',array('used','refurbished'))
                         ->where('category_product.id_category', '=', $categoriaId);
                         
         
