@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Customer;
-use App\Address;
+use App\customer;
+use App\address;
 use Carbon\Carbon;
 use DB;
 class customerController extends Controller
