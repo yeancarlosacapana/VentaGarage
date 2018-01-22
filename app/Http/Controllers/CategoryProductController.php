@@ -237,7 +237,7 @@ class CategoryProductController extends Controller
                         ->where('product.price', '>=', $precioMin)
                         ->where('product.price', '<=', $precioMax)
                         ->where('product_lang.id_lang','=',2)
-                        ->whereIn('product.condition',array('used','refurbished'));
+                        ->whereIn('product.condition',array('used','refurbished'))
                         ->where('product_lang.name', 'like', '%'.$productName.'%');
                         //->where('category_lang.id_lang', '=' , $this->id_lang);
         if(isset($request['_sort']) && $request['_sort'] != "" && $request['_sort'] != "popularity" && $request['_sort'] != "new")
