@@ -30,6 +30,7 @@ Route::get('/getCategory','ProductController@index');
 Route::post('register','customerController@registerCustomer');
 Route::post('product','ProductController@addProduct');
 Route::post('loginCustomer/','customerController@loginCustomer');
+Route::post('loginSocial/','customerController@loginSocial');
 Route::get('/state', 'StateController@index');
 Route::get('/provincia/{id_state}', 'ProvinciaController@index');
 Route::get('distrito/{id_provincia}', 'DistritoController@index');
