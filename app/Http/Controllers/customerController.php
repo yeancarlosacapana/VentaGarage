@@ -26,7 +26,7 @@ class CustomerController extends Controller
 
        $oAddress = $eCustomer['address'];
        $this->grabarAddres($oAddress,$mCustomer->id_customer);
-
+       return response()->json($mCustomer,200);
 
     }
     public function grabarAddres($oAddress,$id_customer)
