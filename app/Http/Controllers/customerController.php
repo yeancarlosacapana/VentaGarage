@@ -63,7 +63,7 @@ class CustomerController extends Controller
                             $ologinCustomer->select('email','id_customer','firstname','lastname',DB::raw('1 as is_logged'));
         $customerLogin =    $ologinCustomer->first();
                         
-        return response()->json($$customerLogin,200);
+        return response()->json($customerLogin,200);
     }
     public function loginSocial(Request $request)
     {
