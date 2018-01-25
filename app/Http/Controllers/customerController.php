@@ -71,6 +71,7 @@ class CustomerController extends Controller
         $ologinSocialCustomer = DB::table('customer')
                                 ->where('email','=',$eloginSocialCustomer['email'])
                                 ->count();
+                                var_dump($ologinSocialCustomer);
                                 //->get();
             if ($ologinSocialCustomer > 0){
                 return response()->json(array('resp'=>true),200);    
