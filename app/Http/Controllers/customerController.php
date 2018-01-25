@@ -70,12 +70,12 @@ class CustomerController extends Controller
         $eloginSocialCustomer = $request;
         $ologinSocialCustomer = DB::table('customer')
                                 ->where('email','=',$eloginSocialCustomer['email'])
-                                ->count()
-                                ->get();
+                                ->count();
+                                //->get();
             if ($ologinSocialCustomer > 0){
-                return response()->json(array('resp'=>'usuario registrado',200));    
+                return response()->json(array('resp'=>true),200);    
             }else{
-                return response()->json(array('resp'=>'registrar usuario',200));
+                return response()->json(array('resp'=> false),200);
             }
 
             
