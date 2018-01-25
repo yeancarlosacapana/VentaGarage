@@ -7,7 +7,7 @@ use App\customer;
 use App\address;
 use Carbon\Carbon;
 use DB;
-class customerController extends Controller
+class CustomerController extends Controller
 {
     public function registerCustomer(Request $request)
     {
@@ -56,13 +56,14 @@ class customerController extends Controller
     {
         $eLoginCustomer = $request;
         $ologinCustomer = DB::table('customer')
-                        ->where('email','=',$eLoginCustomer['email'])
-                        ->where('passwd','=',md5($eLoginCustomer['passwd']))
-                        ->where('active','=',1)
-                        ->select('email','id_customer','firstname','lastname',DB::raw('1 as is_logged'))
-                        ->first();
+                            ->where('email','=',$eLoginCustomer['email']);
+                            if(isset($eLoginCustomer["login_media"]) && $eLoginCustomer["login_media"] == "form")
+                                $ologinCustomer->where('passwd','=',md5($eLoginCustomer['passwd']));
+                            $ologinCustomer->where('active','=',1);
+                            $ologinCustomer->select('email','id_customer','firstname','lastname',DB::raw('1 as is_logged'));
+        $customerLogin =    $ologinCustomer->first();
                         
-        return response()->json($ologinCustomer,200);
+        return response()->json($$customerLogin,200);
     }
     public function loginSocial(Request $request)
     {
