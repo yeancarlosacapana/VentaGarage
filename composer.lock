@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ac433e1963ec04bc76faa6b13077a9a",
+    "content-hash": "82062c41ff92834a2fe4bccff53dbc26",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -118,6 +118,56 @@
                 "laravel"
             ],
             "time": "2018-01-04T06:59:27+00:00"
+        },
+        {
+            "name": "culqi/culqi-php",
+            "version": "v1.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/culqi/culqi-php.git",
+                "reference": "c2d6f4eda20444af529148357ccb927b1dac4265"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/culqi/culqi-php/zipball/c2d6f4eda20444af529148357ccb927b1dac4265",
+                "reference": "c2d6f4eda20444af529148357ccb927b1dac4265",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "rmccue/requests": ">=1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/Culqi/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Culqi and contributors",
+                    "homepage": "https://github.com/culqi/culqi-php/contributors"
+                }
+            ],
+            "description": "Cliente Culqi API para PHP",
+            "homepage": "https://culqi.com",
+            "keywords": [
+                "api",
+                "client",
+                "culqi",
+                "pagos",
+                "payments",
+                "peru",
+                "php"
+            ],
+            "time": "2017-03-17T21:48:09+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1511,6 +1561,55 @@
                 "uuid"
             ],
             "time": "2017-09-22T20:46:04+00:00"
+        },
+        {
+            "name": "rmccue/requests",
+            "version": "v1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmccue/Requests.git",
+                "reference": "87932f52ffad70504d93f04f15690cf16a089546"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmccue/Requests/zipball/87932f52ffad70504d93f04f15690cf16a089546",
+                "reference": "87932f52ffad70504d93f04f15690cf16a089546",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "requests/test-server": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Requests": "library/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "ISC"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan McCue",
+                    "homepage": "http://ryanmccue.info"
+                }
+            ],
+            "description": "A HTTP library written in PHP, for human beings.",
+            "homepage": "http://github.com/rmccue/Requests",
+            "keywords": [
+                "curl",
+                "fsockopen",
+                "http",
+                "idna",
+                "ipv6",
+                "iri",
+                "sockets"
+            ],
+            "time": "2016-10-13T00:11:37+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
