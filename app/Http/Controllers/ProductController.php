@@ -34,7 +34,7 @@ class ProductController extends Controller
     }
     public function addProduct(Request $request)
     {
-
+        $eProduct = $request;
         $oCustomerProduct = $eProduct['customerProduct'];
         $cuenta = DB::table('customer_product')
         ->where('id_customer','=',$oCustomerProduct['id_customer'])
