@@ -14,14 +14,11 @@ use App\CustomerProduct;
 use DB;
 use Config;
 
-use Culqi\Culqi;
-use Culqi\CulqiException;
 
 class ProductController extends Controller
 {
     private $id_lang = 2;
     private $registerMax = 3;
-    private $api_secret_key = "pk_test_3KJlaO6Wq4F7YXMq";
     /**
      * Display a listing of the resource.
      *
@@ -37,16 +34,6 @@ class ProductController extends Controller
     }
     public function addProduct(Request $request)
     {
-        
-        $oCulqi = $request["culqi"];
-        $eProduct = $request["product"];
-        try{
-            $cargo = $this->createCharge($oCulqi,$eProduct);
-            echo json_encode($cargo);
-        }catch(Exception $ex){
-           echo json_encode($ex);
-        }
-        die();
 
         $oCustomerProduct = $eProduct['customerProduct'];
         $cuenta = DB::table('customer_product')
@@ -205,34 +192,5 @@ class ProductController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    private function createCharge($culqi_,$product){
-        $culqi = new Culqi(array('api_key' => $this->api_secret_key));
-        //$culqi->setEnv("INTEG");
-        $token = $culqi_["token"]["id"];
-        try{
-            // Creamos Cargo a una tarjeta
-            $cargo = $culqi->Charges->create(
-                array(
-                    "token"=> $token,
-                    "moneda"=> "PEN",
-                    "monto"=> 400,
-                    "descripcion"=> 'Dale un aire de frescura a tu comunicación con un smartphone.',
-                    "pedido"=> time(),
-                    "codigo_pais"=> "PE",
-                    "ciudad"=> "Lima",  
-                    "usuario"=> "71701956",
-                    "direccion"=> "Avenida Lima 1232",
-                    "telefono"=> 12313123,
-                    "nombres"=> "Stephan",
-                    "apellidos"=> "Vargas",
-                    "correo_electronico"=> "stephan.vargas@culqi.com"
-                )
-            );
-            return $cargo;
-        } catch(CulqiException $e){
-            throw new CulqiException($e);
-        }
     }
 }
