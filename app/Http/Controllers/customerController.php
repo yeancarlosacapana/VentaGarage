@@ -60,7 +60,13 @@ class CustomerController extends Controller
                             if(isset($eLoginCustomer["login_media"]) && $eLoginCustomer["login_media"] == "form")
                                 $ologinCustomer->where('passwd','=',md5($eLoginCustomer['passwd']));
                             $ologinCustomer->where('active','=',1);
-                            $ologinCustomer->select('email','id_customer','firstname','lastname',DB::raw('1 as is_logged'));
+                            $ologinCustomer->select(
+                                    'id_customer',
+                                    'email',
+                                    'id_customer',
+                                    'firstname',
+                                    'lastname',
+                                    DB::raw('1 as is_logged'));
         $customerLogin =    $ologinCustomer->first();
         return response()->json($customerLogin,200);
     }

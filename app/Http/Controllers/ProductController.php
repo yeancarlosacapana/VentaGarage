@@ -18,6 +18,7 @@ use Config;
 class ProductController extends Controller
 {
     private $id_lang = 2;
+    private $id_shop = 2;
     private $registerMax = 3;
     /**
      * Display a listing of the resource.
@@ -43,11 +44,13 @@ class ProductController extends Controller
             $mProduct = new Product();
             $mProduct->id_tax_rules_group = 1;
             $mProduct->id_category_default = $eProduct["id_category_default"];
+            $mProduct->id_shop_default = $this->id_shop;
             $mProduct->price = $eProduct["price"];
             $mProduct->condition = 'used';
             $mProduct->date_add=Carbon::now();
             $mProduct->date_upd=Carbon::now();
             $mProduct->save();
+
             $oProductLang = $eProduct['productLang'];
             $oImages = $eProduct['imgData'];
             
@@ -56,6 +59,8 @@ class ProductController extends Controller
             $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product);
             $this->addImages($oImages,$mProduct->id_product);
             $this->addCustomerProduct($mProduct->id_product,$oCustomerProduct['id_customer']);
+            $oOrder = new OrderController();
+            $oOrder->save($eProduct["orderGarage"],$mProduct->id_product);
 
             return response()->json($mProduct, 200);
         }else{
@@ -67,7 +72,7 @@ class ProductController extends Controller
     {
         $mProductLang = new ProductLang();
         $mProductLang->id_product = $id_product;
-        $mProductLang->id_lang=2;
+        $mProductLang->id_lang = $this->id_lang;
        $mProductLang->description=$oProductLang['description'];
        $mProductLang->inst_message='Producto no disponible en stock';
        $mProductLang->description_short=$oProductLang['description'];
@@ -148,8 +153,7 @@ class ProductController extends Controller
                                 'product.depth',
                                 'product.condition',
                                 'image.id_image',
-                                'product.id_product'
-                                )
+                                'product.id_product')
         ->first();
         $images =  Image::where('id_product','=',$productById->id_product)->get();
         foreach($images as $key=>$image)
@@ -192,5 +196,36 @@ class ProductController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getProductByCustomer(Request $request){
+        
+        $oProductCommand = DB::table('product')
+                        ->join('product_lang','product.id_product','=','product_lang.id_product')
+                        ->leftJoin('category','product.id_category_default','=','category.id_category')
+                        ->leftJoin('category_lang','category.id_category','=','category_lang.id_category')
+                        ->join('customer_product','product.id_product','=','customer_product.id_product')
+                        ->leftJoin('order_garage','product.id_product','=','order_garage.id_product')
+                        ->where('category_lang.id_lang','=',$this->id_lang)
+                        ->where('product.id_shop_default','=',$this->id_shop)
+                        ->where('customer_product.id_customer','=',$request["id_customer"]);
+                        if(isset($request["id_product"]) && $request["id_product"] > 0)
+                            $oProductCommand->where('product.id_product','=',$request["id_product"]);
+        
+        $oProductCommand =  $oProductCommand->select(
+                            DB::raw(DB::getTablePrefix().'category_lang.name as category'),
+                            'category.id_category',
+                            'product.id_product',
+                            'product.id_category_default',
+                            'product.price',
+                            'product_lang.name',
+                            'product_lang.description',
+                            'order_garage.method_payout',
+                            'order_garage.pasarella',
+                            'order_garage.total');
+
+        $listProduct = $request["id_product"] == 0?$oProductCommand->get():$oProductCommand->first();
+        
+        return response()->json($listProduct, 200);
     }
 }

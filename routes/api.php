@@ -36,3 +36,4 @@ Route::get('/provincia/{id_state}', 'ProvinciaController@index');
 Route::get('distrito/{id_provincia}', 'DistritoController@index');
 
 Route::post("culqi/payout","CulqiController@payout");
+Route::post("product/customer","ProductController@getProductByCustomer");
