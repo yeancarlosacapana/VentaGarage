@@ -225,6 +225,10 @@ class ProductController extends Controller
                             'order_garage.total');
 
         $listProduct = $request["id_product"] == 0?$oProductCommand->get():$oProductCommand->first();
+        if($request["id_product"] > 0){
+            $listImage = Image::where('id_product','=',$request["id_product"])->get();
+            $listProduct->image = $listImage;
+        }
         
         return response()->json($listProduct, 200);
     }
