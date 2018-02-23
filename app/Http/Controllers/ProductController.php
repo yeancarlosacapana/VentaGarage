@@ -196,6 +196,15 @@ class ProductController extends Controller
     public function destroy($id)
     {
         //
+        $id_product = $id;
+        Image::where('id_product','=',$id_product)->delete();
+        CategoryProduct::where('id_product','=',$id_product)->delete();
+        CustomerProduct::where('id_product','=',$id_product)->delete();
+        ProductLang::where('id_product','=',$id_product)->delete();
+        Order::where('id_product','=',$id_product)->delete();
+        Product::destroy($id_product);
+
+        return response()->json(array("resp"=> true), 200);
     }
 
     public function getProductByCustomer(Request $request){
