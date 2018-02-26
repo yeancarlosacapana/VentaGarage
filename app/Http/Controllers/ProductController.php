@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\CategoryLang;
 use App\Category;
 use App\CategoryProduct;
@@ -11,6 +12,8 @@ use App\ProductLang;
 use Carbon\Carbon;
 use App\Image;
 use App\CustomerProduct;
+use App\Order;
+
 use DB;
 use Config;
 
