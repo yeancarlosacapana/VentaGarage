@@ -28,6 +28,7 @@ Route::get('/subcategoria/{id_category}','CategoryProductController@showCategory
 Route::get('/itemProduct/{id}','ProductController@show');
 Route::get('/getCategory','ProductController@index');
 Route::post('register','customerController@registerCustomer');
+Route::resource('product','ProductController');
 Route::post('product','ProductController@addProduct');
 Route::post('loginCustomer/','customerController@loginCustomer');
 Route::post('loginSocial/','customerController@loginSocial');
