@@ -200,6 +200,7 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         //
+        
     }
 
     /**
@@ -251,7 +252,12 @@ class ProductController extends Controller
         $listProduct = $request["id_product"] == 0?$oProductCommand->get():$oProductCommand->first();
         if($request["id_product"] > 0){
             $listImage = Image::where('id_product','=',$request["id_product"])->get();
+            $imgData = array();
+            foreach($listImage as $key => $image){
+                $imgData[$key] =  Config::get('constants.images.url').$image->id_image.'.jpg';
+            }
             $listProduct->image = $listImage;
+            $listProduct->imgData = $imgData;
         }
         
         return response()->json($listProduct, 200);
