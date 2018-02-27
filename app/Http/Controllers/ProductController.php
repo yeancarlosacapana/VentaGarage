@@ -164,6 +164,17 @@ class ProductController extends Controller
             $images[$key]->urlImage = Config::get('constants.images.url').$image->id_image.'.jpg';
         }
         $productById->image = $images;
+        $productById->customer = DB::table('customer_product')
+                                    ->join('customer','customer.id_customer','=','customer_product.id_customer')
+                                    ->leftJoin('address','address.id_customer','=','customer.id_customer')
+                                    ->select(
+                                        'customer.id_customer',
+                                        'customer.firstname',
+                                        'customer.lastname',
+                                        'customer.email',
+                                        'address.phone',
+                                        'address.phone_mobile'
+                                    )->first();
         return response()->json($productById,200);
     }
 

@@ -11,6 +11,7 @@ class CustomerController extends Controller
 {
     public function registerCustomer(Request $request)
     {
+        
        $eCustomer = $request;
        $mCustomer = new Customer();
        $mCustomer->id_gender = 0;
