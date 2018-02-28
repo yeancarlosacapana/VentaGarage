@@ -23,6 +23,8 @@ class ProductController extends Controller
     private $id_lang = 2;
     private $id_shop = 2;
     private $registerMax = 3;
+    private $id_tax_rules_group = 1;
+    private $condition = "used";
     /**
      * Display a listing of the resource.
      *
@@ -41,15 +43,15 @@ class ProductController extends Controller
         $eProduct = $request;
         $oCustomerProduct = $eProduct['customerProduct'];
         $cuenta = DB::table('customer_product')
-        ->where('id_customer','=',$oCustomerProduct['id_customer'])
-        ->count('id_customer');
+                    ->where('id_customer','=',$oCustomerProduct['id_customer'])
+                    ->count('id_customer');
         if($cuenta <= $this->registerMax){
             $mProduct = new Product();
-            $mProduct->id_tax_rules_group = 1;
-            $mProduct->id_category_default = $eProduct["id_category_default"];
+            $mProduct->id_tax_rules_group = $this->id_tax_rules_group;
             $mProduct->id_shop_default = $this->id_shop;
+            $mProduct->id_category_default = $eProduct["id_category_default"];
             $mProduct->price = $eProduct["price"];
-            $mProduct->condition = 'used';
+            $mProduct->condition = $this->condition;
             $mProduct->date_add=Carbon::now();
             $mProduct->date_upd=Carbon::now();
             $mProduct->save();
@@ -58,8 +60,8 @@ class ProductController extends Controller
             $oImages = $eProduct['imgData'];
             
             
-            $this->addProductLang($oProductLang,$mProduct->id_product);
-            $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product);
+            $this->addProductLang($oProductLang,$mProduct->id_product,"ins");
+            $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product,"ins");
             $this->addImages($oImages,$mProduct->id_product);
             $this->addCustomerProduct($mProduct->id_product,$oCustomerProduct['id_customer']);
             $oOrder = new OrderController();
@@ -71,17 +73,20 @@ class ProductController extends Controller
             return response()->json(array("resp"=>"a alcansado el limite de registro"), 200);
         }
     }
-    public function addProductLang($oProductLang,$id_product)
+    public function addProductLang($oProductLang,$id_product,$action)
     {
+        if($action == "upd")
+            ProductLang::where('id_product',$id_product)->delete();
+        
         $mProductLang = new ProductLang();
         $mProductLang->id_product = $id_product;
         $mProductLang->id_lang = $this->id_lang;
-       $mProductLang->description=$oProductLang['description'];
-       $mProductLang->inst_message='Producto no disponible en stock';
-       $mProductLang->description_short=$oProductLang['description'];
-       $mProductLang->link_rewrite=$oProductLang['name'];
-       $mProductLang->name=$oProductLang['name'];
-       $mProductLang->save();
+        $mProductLang->description=$oProductLang['description'];
+        $mProductLang->inst_message = 'Producto no disponible en stock';
+        $mProductLang->description_short = $oProductLang['description'];
+        $mProductLang->link_rewrite = $oProductLang['name'];
+        $mProductLang->name = $oProductLang['name'];
+        $mProductLang->save();
     }
     public function addCustomerProduct($id_product,$id_customer)
     {
@@ -105,10 +110,12 @@ class ProductController extends Controller
             }
         }
     }
-    public function addCategoryProduct($id_category,$id_product)
+    public function addCategoryProduct($id_category,$id_product,$action)
     {
+        if($action == "upd")
+            CategoryProduct::where('id_product',$id_product)->delete();
         $mCategoryProduct = new CategoryProduct();
-        $mCategoryProduct->id_product=$id_product;
+        $mCategoryProduct->id_product = $id_product;
         $mCategoryProduct->id_category = $id_category;
         $mCategoryProduct->save();
     }
@@ -200,7 +207,19 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $eProduct = $request;
+        $eProductLang = $eProduct['productLang'];
+
+        $mProduct = Product::find($id);
+        $mProduct->id_category_default = $eProduct["id_category_default"];
+        $mProduct->price = $eProduct["price"];
+        $mProduct->date_upd = Carbon::now();
+        $mProduct->save();
         
+        $this->addProductLang($eProductLang,$mProduct->id_product,"upd");
+        $this->addCategoryProduct($mProduct->id_category_default,$eProduct->id_product,'upd');
+
+        return response()->json($mProduct, 200);
     }
 
     /**
