@@ -17,9 +17,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 
 });
+
+Route::resource('product','ProductController');
+Route::post('product','ProductController@addProduct');
+Route::post("product/customer","ProductController@getProductByCustomer");
+
+Route::resource('itemCategory', 'CategoryProductController');
+
 Route::get('/category' , 'CategoryController@index');
 Route::get('/slider','CategoryController@slider');
-Route::resource('itemCategory', 'CategoryProductController');
 Route::get('/search/{name}' , 'CategoryProductController@byName');
 Route::get('/filterPriceCategory' , 'CategoryProductController@filterByPriceFromCategory');
 Route::get('/filterPriceName' , 'CategoryProductController@filterByPriceFromName');
@@ -28,8 +34,6 @@ Route::get('/subcategoria/{id_category}','CategoryProductController@showCategory
 Route::get('/itemProduct/{id}','ProductController@show');
 Route::get('/getCategory','ProductController@index');
 Route::post('register','customerController@registerCustomer');
-Route::resource('product','ProductController');
-Route::post('product','ProductController@addProduct');
 Route::post('loginCustomer/','customerController@loginCustomer');
 Route::post('loginSocial/','customerController@loginSocial');
 Route::get('/state', 'StateController@index');
@@ -37,4 +41,3 @@ Route::get('/provincia/{id_state}', 'ProvinciaController@index');
 Route::get('distrito/{id_provincia}', 'DistritoController@index');
 
 Route::post("culqi/payout","CulqiController@payout");
-Route::post("product/customer","ProductController@getProductByCustomer");

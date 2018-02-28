@@ -57,12 +57,12 @@ class ProductController extends Controller
             $mProduct->save();
 
             $oProductLang = $eProduct['productLang'];
-            $oImages = $eProduct['imgData'];
+            $oImages = $eProduct['image'];
             
             
             $this->addProductLang($oProductLang,$mProduct->id_product,"ins");
             $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product,"ins");
-            $this->addImages($oImages,$mProduct->id_product);
+            $this->addImages($oImages,$mProduct->id_product,"ins");
             $this->addCustomerProduct($mProduct->id_product,$oCustomerProduct['id_customer']);
             $oOrder = new OrderController();
             $oOrder->save($eProduct["orderGarage"],$mProduct->id_product);
@@ -95,18 +95,17 @@ class ProductController extends Controller
         $mCustomerProduct->id_customer = $id_customer; 
         $mCustomerProduct->save();
     }
-    public function addImages($oImages,$id_product)
+    public function addImages($oImages,$id_product,$action)
     {
         foreach($oImages as $image){
-            $mImage = new Image();
-            $mImage->id_product = $id_product;
-            $mImage->save();
-
-            $file_name = $mImage->id_image.'.jpg'; //generating unique file name; 
-            @list($type, $image) = explode(';', $image);
-            @list(, $image) = explode(',', $image); 
-            if($image != ""){ // storing image in storage/app/public Folder 
-                \Storage::disk('public')->put($file_name,base64_decode($image)); 
+            if($action == "upd"){
+                $this->saveFileToStorage($image["id_image"],$image["image"]);
+            }else{
+                $mImage = new Image();
+                $mImage->id_product = $id_product;
+                $mImage->save();
+    
+                $this->saveFileToStorage($mImage->id_image,$image["image"]);
             }
         }
     }
@@ -209,6 +208,7 @@ class ProductController extends Controller
         //
         $eProduct = $request;
         $eProductLang = $eProduct['productLang'];
+        $eImage = $eProduct["image"];
 
         $mProduct = Product::find($id);
         $mProduct->id_category_default = $eProduct["id_category_default"];
@@ -218,6 +218,7 @@ class ProductController extends Controller
         
         $this->addProductLang($eProductLang,$mProduct->id_product,"upd");
         $this->addCategoryProduct($mProduct->id_category_default,$eProduct->id_product,'upd');
+        $this->addImages($eImage,$mProduct->id_product,"upd");
 
         return response()->json($mProduct, 200);
     }
@@ -271,14 +272,24 @@ class ProductController extends Controller
         $listProduct = $request["id_product"] == 0?$oProductCommand->get():$oProductCommand->first();
         if($request["id_product"] > 0){
             $listImage = Image::where('id_product','=',$request["id_product"])->get();
-            $imgData = array();
             foreach($listImage as $key => $image){
-                $imgData[$key] =  Config::get('constants.images.url').$image->id_image.'.jpg';
+                $listImage[$key]->image = Config::get('constants.images.url').$image->id_image.'.jpg';
             }
             $listProduct->image = $listImage;
-            $listProduct->imgData = $imgData;
         }
         
         return response()->json($listProduct, 200);
+    }
+    private function saveFileToStorage($id_image,$base64){
+        try{        
+            $file_name = $id_image.'.jpg'; //generating unique file name; 
+            @list($type, $base64) = explode(';', $base64);
+            @list(, $base64) = explode(',', $base64);
+            if($base64 != "" && $base64 != NULL){ // storing image in storage/app/public Folder
+                \Storage::disk('public')->put($file_name,base64_decode($base64)); 
+            }
+        }catch(\Exception $ex){
+            throw new Exception($ex->getMessage(), 1);
+        }
     }
 }
