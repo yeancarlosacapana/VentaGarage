@@ -284,7 +284,7 @@ class ProductController extends Controller
                 $listImage[$key]->image = Config::get('constants.images.url').$image->id_image.'.jpg';
             }
             $listProduct->image = $listImage;
-            $listProduct->categoryProduct = CategoryProduct::where('id_product','=',$request["id_product"]);
+            $listProduct->categoryProduct = CategoryProduct::where('id_product','=',$request["id_product"])-get();
         }
         
         return response()->json($listProduct, 200);
