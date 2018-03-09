@@ -7,6 +7,7 @@ use App\CategoryLang;
 use App\Category;
 use DB;
 use Config;
+
 class CategoryController extends Controller
 {
     private $id_lang = 1;
