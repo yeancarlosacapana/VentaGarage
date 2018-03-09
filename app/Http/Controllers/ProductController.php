@@ -118,12 +118,14 @@ class ProductController extends Controller
         $mCategoryProduct = new CategoryProduct();
         $mCategoryProduct->id_product = $id_product;
         $mCategoryProduct->id_category = $id_category;
+        $mCategoryProduct->position = 1;
         $mCategoryProduct->save();
 
         if(isset($product["id_sub_category"])){
             $mCategoryProduct = new CategoryProduct();
             $mCategoryProduct->id_product = $id_product;
             $mCategoryProduct->id_category = $product["id_sub_category"];
+            $mCategoryProduct->position = 2;
             $mCategoryProduct->save();
         }
     }
@@ -242,7 +244,12 @@ class ProductController extends Controller
     {
         //
         $id_product = $id;
-        Image::where('id_product','=',$id_product)->delete();
+        $images = Image::where('id_product','=',$id_product)->get();
+        foreach ($images as $key => $image) {
+            \Storage::disk('public')->delete($image->id_image.'.jpg');
+            Image::destroy($image->id_image);
+        }
+
         CategoryProduct::where('id_product','=',$id_product)->delete();
         CustomerProduct::where('id_product','=',$id_product)->delete();
         ProductLang::where('id_product','=',$id_product)->delete();
@@ -285,7 +292,7 @@ class ProductController extends Controller
                 $listImage[$key]->image = Config::get('constants.images.url').$image->id_image.'.jpg';
             }
             $listProduct->image = $listImage;
-            $listProduct->categoryProduct = CategoryProduct::where('id_product','=',$request["id_product"])->get();
+            $listProduct->categoryProduct = CategoryProduct::where('id_product','=',$request["id_product"])->orderBy('position','ASC')->get();
         }
         
         return response()->json($listProduct, 200);
