@@ -20,7 +20,7 @@ class CategoryController extends Controller
     {
         $oCategory = Category::with('CategoryLang')
                                 ->where('level_depth','=','2')
-                                ->where('active','=',$active)
+                                ->where('active','=',$this->active)
                                 ->orderBy('level_depth', 'asc')->get();
 
         foreach($oCategory as $key=>$item){    
