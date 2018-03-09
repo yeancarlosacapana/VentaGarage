@@ -122,7 +122,7 @@ class ProductController extends Controller
         if(isset($product["id_sub_category"])){
             $mCategoryProduct = new CategoryProduct();
             $mCategoryProduct->id_product = $id_product;
-            $mCategoryProduct->id_category = $id_sub_category;
+            $mCategoryProduct->id_category = $product["id_sub_category"];
             $mCategoryProduct->save();
         }
     }
