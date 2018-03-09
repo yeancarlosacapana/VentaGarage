@@ -23,7 +23,7 @@ class ProductController extends Controller
 {
     private $id_lang = 2;
     private $id_shop = 2;
-    private $registerMax = 3;
+    private $registerMax = 10;
     private $id_tax_rules_group = 1;
     private $condition = "used";
     /**
