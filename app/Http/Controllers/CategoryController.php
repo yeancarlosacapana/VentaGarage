@@ -10,36 +10,23 @@ use Config;
 class CategoryController extends Controller
 {
     private $id_lang = 1;
+    private $active = 1;
     /**
      * Display a listing of the resource.
-     *
+     *getCategory
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
         $oCategory = Category::with('CategoryLang')
                                 ->where('level_depth','=','2')
-                                ->where('active','=',1)
+                                ->where('active','=',$active)
                                 ->orderBy('level_depth', 'asc')->get();
-                                foreach($oCategory as $key=>$item)
-        {    
+
+        foreach($oCategory as $key=>$item){    
             $oCategory[$key]->url= Config::get('constants.hogaryspacios.url').'/img/c/'.$item->id_category.'.jpg';
         }
         return response()->json($oCategory,200);
-       //  $itemSlider = DB::table('homeslider')
-       //  ->leftJoin('homeslider_slides', 'homeslider.id_homeslider_slides', '=', 'homeslider_slides.id_homeslider_slides')
-       //  ->leftJoin('homeslider_slides_lang', 'homeslider.id_homeslider_slides', '=', 'homeslider_slides_lang.id_homeslider_slides')
-       //  ->where('homeslider_slides.active' , '=' , '1')
-       //  ->where('homeslider_slides_lang.id_lang' , '>' , '1')
-       //  ->get();
-       //  foreach($itemSlider as $key=>$item){
-            
-       //      $itemSlider[$key]->url= Config::get('constants.hogaryspacios.url').'/modules/ps_imageslider/images/'.$item->image;
-       //  }
-       //  //return response()->json($oCategory,200);
-       // return view('templates.category', ['category' => $oCategory->toArray()],['slider' => $itemSlider->toArray()]);
-
-        
     }
     public function slider()
     {

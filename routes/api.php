@@ -32,7 +32,7 @@ Route::get('/filterPriceName' , 'CategoryProductController@filterByPriceFromName
 Route::get('/filtrarFecha','CategoryProductController@busquedaPorFecha');
 Route::get('/subcategoria/{id_category}','CategoryProductController@showCategoryByIdCategory');
 Route::get('/itemProduct/{id}','ProductController@show');
-Route::get('/getCategory','ProductController@index');
+//Route::get('/getCategory','ProductController@index');
 Route::post('register','customerController@registerCustomer');
 Route::post('loginCustomer/','customerController@loginCustomer');
 Route::post('loginSocial/','customerController@loginSocial');

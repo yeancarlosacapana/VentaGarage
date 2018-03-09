@@ -61,7 +61,7 @@ class ProductController extends Controller
             
             
             $this->addProductLang($oProductLang,$mProduct->id_product,"ins");
-            $this->addCategoryProduct($mProduct->id_category_default,$mProduct->id_product,"ins");
+            $this->addCategoryProduct($mProduct->id_category_default,$eProduct,$mProduct->id_product,"ins");
             $this->addImages($oImages,$mProduct->id_product,"ins");
             $this->addCustomerProduct($mProduct->id_product,$oCustomerProduct['id_customer']);
             $oOrder = new OrderController();
@@ -109,14 +109,22 @@ class ProductController extends Controller
             }
         }
     }
-    public function addCategoryProduct($id_category,$id_product,$action)
+    public function addCategoryProduct($id_category,$product,$id_product,$action)
     {
         if($action == "upd")
             CategoryProduct::where('id_product',$id_product)->delete();
+
         $mCategoryProduct = new CategoryProduct();
         $mCategoryProduct->id_product = $id_product;
         $mCategoryProduct->id_category = $id_category;
         $mCategoryProduct->save();
+
+        if(isset($product["id_sub_category"])){
+            $mCategoryProduct = new CategoryProduct();
+            $mCategoryProduct->id_product = $id_product;
+            $mCategoryProduct->id_category = $id_sub_category;
+            $mCategoryProduct->save();
+        }
     }
     /**
      * Show the form for creating a new resource.
@@ -276,6 +284,7 @@ class ProductController extends Controller
                 $listImage[$key]->image = Config::get('constants.images.url').$image->id_image.'.jpg';
             }
             $listProduct->image = $listImage;
+            $listProduct->categoryProduct = CategoryProduct::where('id_product','=',$request["id_product"]);
         }
         
         return response()->json($listProduct, 200);
